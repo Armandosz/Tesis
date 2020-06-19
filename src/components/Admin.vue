@@ -1,19 +1,19 @@
 <template>
-  <div class="list row text-white">
+  <div class="list row">
         <!--<a href="#" @click="logout">Cerrar Sesion</a>-->
-    <!-- Primer container -->
-    <div class="col-md-10 p-2 rounded shadow-lg" style="background-color: rgba(0,0,0,0.5) !important;">
-        <h4>Archivo de inventario:</h4>
-        <div class="card" >
-            <div class="custom-file card-body">
-                <input type="file" class="custom-file-input" id="customFileLang" lang="es">
-                <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
-            </div>
-        </div>
+    <!--Primer contenedor para cambiar contraseñas-->
+    <div class="col-md-10 m-5 rounded shadow-lg" style="background-color: #002657;">
+        <h4>Contraseña guardada:</h4>
+            <form>
+              <div class="input-group bg-secondary">
+                <input :type="passwordFieldType" v-model="password" id="inputPassword" class="form-control" placeholder="Password">
+                <b-icon @click="switchVisibility" class="pt-2" icon="eye-slash-fill" font-scale="1.8"></b-icon>
+              </div>
+            </form>
         <button type="button" class="btn btn-success btn-small m-2 float-md-right">Success</button>
     </div>
 
-    <!--Segundo contenedor-->
+    <!--Segundo contenedor
     <div class="col-md-10 mt-4 rounded shadow-lg" style="background-color: rgba(0,0,0,0.5) !important;">
         <h4>Contraseña guardada:</h4>
         <div class="card">
@@ -24,56 +24,54 @@
         </div>
         <button type="button" class="btn btn-success btn-small m-2 float-md-right">Success</button>
     </div>
+    -->
     
 
     <!-- Tercer contenedor -->
     <!-- Search -->
-    <div class="col-md-10">
-      <br>
+    <div class="col-md-10 rounded shadow-lg ml-5 mr-5 mb-1" style="background-color: #002657;">
+      <h4>Filtrar por:</h4>
       <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Search by title"
+        <input type="text" class="form-control" placeholder="Ingrese el texto a buscar"
           v-model="title"/>
         <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button"
+          <button class="btn btn-success" type="button"
             @click="searchTitle"
           >
-            Search
+            Buscar
           </button>
         </div>
       </div>
     </div>
-    <!-- Tabla prueba -->
-    <div class="col-md-10 rounded" style="background-color: rgba(0,0,0,0.5) !important;">
-      <h4>Usuarios</h4>
-        <table class="table-responsive table-striped table-hover">
-            <thead style="background-color: #002657;">
+    
+      <!-- Tabla prueba -->
+    <div style="height:400px; overflow:auto;" class="col-md-14 text-center rounded shadow-lg ml-4 mt-1 mb-4" >
+        <table cellspacing="5" cellpadding="5" width="300" class="table-responsive table-striped table-hover">
+            <thead class="bg-dark text-white">
                 <tr>
-                <th scope="col">#</th>
+                <th scope="col"># Trabajador</th>
                 <th scope="col">Nombre</th>
-                <th scope="col">Contraseña</th>
-                <th scope="col">Tipo</th>
-                <th scope="col">Restablecer</th>
+                <th scope="col">Correo</th>
+                <th scope="col">Role</th>
+                <th scope="col">Cambiar contraseña</th>
                 </tr>
             </thead>
              <tbody>
+               <!--Index is use for show the position-->
                 <tr :class="{ active: index == currentIndex }"
                     v-for="(tutorial, index) in tutorials"
                     :key="index"
                     @click="setActiveTutorial(tutorial, index)"
                 >
-                    <th  v-if="tutorial.no_trabajador == '1477'" scope="row">{{tutorial.numero}}</th>
-                    <td>{{tutorial.marca}}</td>
-                    <td>{{tutorial.modelo}}</td>
-                    <td>{{tutorial.serie}}</td>
-                    <td>{{tutorial.no_trabajador}}</td>
+                    <th scope="row">{{tutorial.username}}</th>
+                    <td>{{tutorial.name}}</td>
+                    <td>{{tutorial.email}}</td>
+                    <td>Roles</td>
+                    <td><button type="button" class="btn btn-warning">Editar</button></td>
                 </tr>
              </tbody>
         </table>
     </div>
-  <!--tabla vue-->
-  <div>
-    <b-table striped hover :items="items"></b-table>
-  </div>
 
   </div>
 </template>
@@ -121,7 +119,7 @@ export default {
       //this.token = this.currentUser.accessToken
       //console.log(token)
         //console.log(localStorage.getItem(user.token));
-      TutorialDataService.getAll(this.config)
+      TutorialDataService.getAllUsers(this.config)
         .then(response => {
           this.tutorials = response.data;
           console.log(response.data);

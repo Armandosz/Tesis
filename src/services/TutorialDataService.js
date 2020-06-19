@@ -4,6 +4,10 @@ class TutorialDataService {
   getAll(config) {
     return http.get("http://localhost:5000/inventario/",config);
   }
+  
+  getAllUsers(config) {
+    return http.get("http://localhost:5000/usuarios/",config);
+  }
 
   get(id) {
     return http.get(`/${id}`);

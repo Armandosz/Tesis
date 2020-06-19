@@ -39,6 +39,11 @@ const  router = new Router({
       component: () => import("./components/Admin"),
     },
     {
+      path: "/custodio",
+      name: "custodio",
+      component: () => import("./components/Custodio"),
+    },
+    {
       path: "/pedidos",
       name: "pedidos",
       component: () => import("./components/PedidosList"),
@@ -53,6 +58,11 @@ const  router = new Router({
       name: "profile",
       // lazy-loaded
       component: () => import("./components/Profile")
+    },
+    {
+      path: "/inventario",
+      name: "inventario",
+      component: () => import("./components/Inventario")
     }
   ]
 });

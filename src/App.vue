@@ -1,46 +1,25 @@
 <template>
   <div id="app">
-   <!-- <nav  class="navbar navbar-expand-lg navbar-dark bg-info">
-      <a class="navbar-brand" @click.prevent>Company Name</a>
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarsExample05">
-        <ul class="navbar-nav mr-auto">
-          <li v-if="showAdminBoard" class="nav-item">
-            <router-link v-if="showAdminBoard" to="/admin" class="nav-link">
-              Usuarios
-             </router-link>
-            <a class="nav-link" href="/admin">Admin</a>
-          </li>
-          <li class="nav-item">
-            <router-link v-if="showModeratorBoard" to="/menu" class="nav-link">
-              Custodio
-             </router-link>
-           <a class="nav-link" href="/pedidos">Custodio</a> 
-          </li>
-          <li v-if="currentUser" class="nav-item">
-          <router-link to="/profile" class="nav-link">
-            Perfil {{ currentUser.username }}
-          </router-link>
-          </li>
-        </ul>
-        <form class="form-inline my-2 my-lg-0">
-             <a class="btn btn-outline-success mr-sm-2 " @click.prevent="logOut">LogOut</a>
-        </form>
-      </div>
-    </nav>-->
-
     <div v-if="currentUser">
-      <b-navbar toggleable="lg" type="dark" variant="info">
+        <header>
+            <img src="logoudc.png" alt="" width="75px">
+            <h3 class="titulo">Dirección de Patrimonio Universitario Facultad de Telemática</h3>
+            <h4 class="subtitulo">Dirección de Patrimonio Universitario</h4>
+        </header>
+
+      <b-navbar toggleable="lg" type="dark" variant="dark">
         <b-navbar-brand href="#">NavBar</b-navbar-brand>
 
         <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
         <b-collapse id="nav-collapse" is-nav>
           <b-navbar-nav>
+            <!-- Admin nav-->
+            <b-nav-item v-if="showAdminBoard" to="/inventario">Inicio</b-nav-item>
             <b-nav-item v-if="showAdminBoard" to="/admin">Usuarios</b-nav-item>
-            <b-nav-item href="#" disabled>Disabled</b-nav-item>
+            <!-- Custodio nav -->
+            <b-nav-item v-if="showUserBoard" to="/custodio">Inicio</b-nav-item>
+            <b-nav-item v-b-modal.modalPopover>Ayuda</b-nav-item>
           </b-navbar-nav>
 
           <!-- Right aligned nav items -->
@@ -48,15 +27,25 @@
             <b-nav-item-dropdown right>
               <!-- Using 'button-content' slot -->
               <template v-slot:button-content>
-                <em>{{ currentUser.username }}</em>
+                <em>[{{ currentUser.username }}]</em>
               </template>
-              <b-dropdown-item to="/profile">Profile</b-dropdown-item>
-              <b-dropdown-item @click.prevent="logOut">Sign Out</b-dropdown-item>
+              <b-dropdown-item to="/profile">Perfil</b-dropdown-item>
+              <b-dropdown-item @click.prevent="logOut">Cerrar Sesión</b-dropdown-item>
             </b-nav-item-dropdown>
           </b-navbar-nav>
         </b-collapse>
       </b-navbar>
     </div>
+
+
+
+      <b-modal id="modalPopover" title="Modal with Popover" modal-cancel>
+        <p>
+         Si necesitas ayuda o tienes algun problema, envia un correo a los administradores o encargados del control de inventario en tu facultad.
+        </p>
+      </b-modal>
+
+
 
 
     <div class="container">
@@ -81,7 +70,7 @@ export default {
       }
       return false;
     },
-    showModeratorBoard() {
+    showUserBoard() {
       if (this.currentUser && this.currentUser.roles) {
         return this.currentUser.roles.includes('ROLE_USER');
       }

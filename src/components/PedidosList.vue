@@ -5,7 +5,7 @@
       <br>
       <div class="input-group mb-3">
         <input type="text" class="form-control" placeholder="Search by title"
-          v-model="title"/>
+          v-model="codigo"/>
         <div class="input-group-append">
           <button class="btn btn-outline-secondary" type="button"
             @click="searchTitle"
@@ -121,7 +121,7 @@ export default {
     },
     
     searchTitle() {
-      TutorialDataService.findByTitle(this.title)
+      TutorialDataService.findByTitle(this.codigo)
         .then(response => {
           this.tutorials = response.data;
           console.log(response.data);

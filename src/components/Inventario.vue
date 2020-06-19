@@ -1,14 +1,14 @@
 <template>
   <div class="list row ">
-    <!--Primer contenedor para cambiar contraseñas-->
+    <!-- Primer container -->
     <div class="col-md-10 m-5 rounded shadow-lg" style="background-color: #002657;">
-        <h4>Contraseña guardada:</h4>
-            <form>
-              <div class="input-group bg-secondary">
-                <input :type="passwordFieldType" v-model="password" id="inputPassword" class="form-control" placeholder="Password">
-                <b-icon @click="switchVisibility" class="pt-2" icon="eye-slash-fill" font-scale="1.8"></b-icon>
-              </div>
-            </form>
+        <h4>Archivo de inventario:</h4>
+        <div class="card" >
+            <div class="custom-file card-body">
+                <input type="file" class="custom-file-input" id="customFileLang" lang="es">
+                <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
+            </div>
+        </div>
         <button type="button" class="btn btn-success btn-small m-2 float-md-right">Success</button>
     </div>
     
@@ -21,7 +21,9 @@
         <input type="text" class="form-control" placeholder="Ingrese el texto a buscar"
           v-model="title"/>
         <div class="input-group-append">
-          <button class="btn btn-secondary" type="button" @click="searchTitle">
+          <button class="btn btn-outline-secondary" type="button"
+            @click="searchTitle"
+          >
             Buscar
           </button>
         </div>
@@ -42,7 +44,7 @@
              <tbody>
                <!--Index is use for show the position-->
                 <tr :class="{ active: index == currentIndex }"
-                    v-for="(tutorial, index) in filteredTutorials"
+                    v-for="(tutorial, index) in tutorials"
                     :key="index"
                     @click="setActiveTutorial(tutorial, index)"
                 >
@@ -225,11 +227,7 @@ export default {
       return this.tutorials.filter(function(u) {
          return u.no_trabajador == this.currentUser.no_trabajador;
      })
-    },
-    filteredTutorials: function () {
-   // will return [{status: 'Available'}]
-    return this.tutorials.filter(tutorial => tutorial.no_trabajador == this.currentUser.username)
-  }
+    }
   }
 };
 </script>
