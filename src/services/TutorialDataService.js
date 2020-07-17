@@ -35,6 +35,22 @@ class TutorialDataService {
     return http.put(`/${id}`, data);
   }
 
+  updateUser(id,data) {
+    return http.put(`/${id}` ,data);
+  }
+
+  updatePassword(id,data) {
+    return http.put(`/${id}` ,data);
+  }
+
+  getGeneralPassword(id) {
+    return http.get(`/${id}`);
+  }
+
+  update2(id, data) {
+    return http.put(`/${id}`, data);
+  }
+
   delete(id) {
     return http.delete(`/${id}`);
   }

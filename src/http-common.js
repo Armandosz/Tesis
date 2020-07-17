@@ -1,12 +1,13 @@
 import axios from "axios";
-//const token = localStorage.getItem("accessToken");
-//const TOKEN = 'Token';
+const token = JSON.parse(localStorage.getItem('user'))['accessToken']
 
 
+console.log(token)
 export default axios.create({
-  baseURL: "http://localhost:5000/pedidos",
+  baseURL: "http://localhost:5000/usuarios",
+  //baseURL: "http://localhost:5000/usuarios",
   headers: {
     "Content-type": "application/json",
-  //  "Authorization": 'Bearer ' + token
+    "Authorization": 'Bearer ' + token
   }
 });

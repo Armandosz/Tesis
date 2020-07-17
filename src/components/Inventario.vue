@@ -1,6 +1,26 @@
 <template>
   <div class="list row ">
-    <!-- Primer container -->
+    <!-- div prueba -->
+    <div class="container ml-4 mt-5">
+      <div class="form-group shadow-lg" style="border-radius:25px; background:#F1F1F1">
+        <div id="titlehd"> 
+          <span class="titlehd">Archivo de inventario:</span>
+        </div>
+        <form class="container card" method="POST" enctype="multipart/form-data">
+          <div class="eweFile form-group">
+            <p>&nbsp;</p>
+            <span class="sel_file">
+              <input type="file" id="file" @change="previewFiles">
+            </span>
+          </div>
+          <div>
+            <button type="button" class="btn btn-success btn-small m-1 float-md-right">Success</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Primer container 
     <div class="col-md-10 m-5 rounded shadow-lg" style="background-color: #002657;">
         <h4>Archivo de inventario:</h4>
         <div class="card" >
@@ -10,23 +30,16 @@
             </div>
         </div>
         <button type="button" class="btn btn-success btn-small m-2 float-md-right">Success</button>
-    </div>
+    </div> -->
     
 
     <!-- Tercer contenedor -->
     <!-- Search -->
-    <div class="col-md-10 rounded shadow-lg ml-5 mr-5 mb-1" style="background-color: #002657;">
-      <h4>Filtrar por:</h4>
+    <div class="col-md-10 ml-4 mr-5 mb-1 mt-1">
+      <span class="titlehd text-dark">Filtrar por:</span>
       <div class="input-group mb-3">
         <input type="text" class="form-control" placeholder="Ingrese el texto a buscar"
-          v-model="title"/>
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button"
-            @click="searchTitle"
-          >
-            Buscar
-          </button>
-        </div>
+          v-model="search"/>
       </div>
     </div>
     <!-- Tabla prueba -->
@@ -43,95 +56,33 @@
             </thead>
              <tbody>
                <!--Index is use for show the position-->
+            <!--   <input type="text" v-model="search" placeholder="search..."> -->
                 <tr :class="{ active: index == currentIndex }"
-                    v-for="(tutorial, index) in tutorials"
+                    v-for="(inmueble, index) in filteredBlog"
                     :key="index"
-                    @click="setActiveTutorial(tutorial, index)"
+                    @click="setActiveTutorial(inmueble, index)"
                 >
-                    <th scope="row">{{tutorial.numero}}</th>
-                    <td>{{tutorial.descripcion}}</td>
-                    <td>{{tutorial.ubicacion}}</td>
-                    <td>{{tutorial.no_trabajador}}</td>
-                    <td>{{tutorial.custodio2}}</td>
+                    <th scope="row">{{inmueble.numero}}</th>
+                    <td>{{inmueble.descripcion}}</td>
+                    <td>{{inmueble.ubicacion}}</td>
+                    <td>{{inmueble.no_trabajador}}</td>
+                    <td>{{inmueble.custodio2}}</td>
                 </tr>
              </tbody>
         </table>
     </div>
-
-<!--
-<table cellspacing="0" cellpadding="0" border="0" width="325">
-  <tr>
-    <td>
-       <table cellspacing="0" cellpadding="1" border="1" width="300" >
-         <tr style="color:white;background-color:grey">
-            <th>Header 1</th>
-            <th>Header 2</th>
-         </tr>
-       </table>
-    </td>
-  </tr>
-  <tr>
-    <td>
-       <div style="width:320px; height:80px; overflow:auto;">
-         <table cellspacing="0" cellpadding="1" border="1" width="300" >
-           <tr>
-             <td>new item</td>
-             <td>new item</td>
-           </tr>
-           <tr>
-             <td>new item</td>
-             <td>new item</td>
-           </tr>
-              <tr>
-             <td>new item</td>
-             <td>new item</td>
-           </tr>
-              <tr>
-             <td>new item</td>
-             <td>new item</td>
-           </tr>
-              <tr>
-             <td>new item</td>
-             <td>new item</td>
-           </tr>
-              <tr>
-             <td>new item</td>
-             <td>new item</td>
-           </tr>
-              <tr>
-             <td>new item</td>
-             <td>new item</td>
-           </tr>
-              <tr>
-             <td>new item</td>
-             <td>new item</td>
-           </tr>
-              <tr>
-             <td>new item</td>
-             <td>new item</td>
-           </tr>
-              <tr>
-             <td>new item</td>
-             <td>new item</td>
-           </tr>
-         </table>  
-       </div>
-    </td>
-  </tr>
-</table>
--->
   </div>
 </template>
 
 <script>
 import TutorialDataService from "../services/TutorialDataService";
-import firebase from "firebase";
+//const path = require('path');
+
+//import index from 'index.js'
+//console.log(index)
 
 
-//const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjdXN0b2RpbyIsImlhdCI6MTU5MjIzNzc5NSwiZXhwIjoxNTkyMzI0MTk1fQ.yMl-_l4-JkpAxja4J9TgRzfNGN9_N0rwMh1AuAzqJHWa3TzSesacvPOqQQzZjjTZBDkqc_KKvWuACckr_-peZg';
 const token = JSON.parse(localStorage.getItem('user'))['accessToken']
-
-
 export default {
   name: "tutorials-list",
   data() {
@@ -143,8 +94,11 @@ export default {
         }
       },
 
-      tutorials: [],
-      currentTutorial: null,
+
+      search:'',
+      file:'',
+      inmuebles: [],
+      currentInmueble: null,
       currentIndex: -1,
       title: "",
 
@@ -156,62 +110,52 @@ export default {
     switchVisibility() {
       this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password'
     },
-    retrieveTutorials() {
-      //this.token = this.currentUser.accessToken
-      //console.log(token)
-        //console.log(localStorage.getItem(user.token));
+    retrieveMobiliario() {
       TutorialDataService.getAll(this.config)
         .then(response => {
-          this.tutorials = response.data;
-          console.log(response.data);
+          this.inmuebles = response.data;
+          //console.log(response.data);
         })
         .catch(e => {
           console.log(e);
         });
     },
 
+    previewFiles(event) {
+      this.file = event.target.files[0].name;
+      console.log(this.file);
+      //console.log(event.target.files);
+   },
+
+    submitFile(){
+      // Methods to display directory 
+      console.log(this.file); 
+    },
+
     refreshList() {
-      this.retrieveTutorials();
-      this.currentTutorial = null;
+      this.retrieveMobiliario();
+      this.currentInmueble = null;
       this.currentIndex = -1;
     },
 
     setActiveTutorial(tutorial, index) {
-      this.currentTutorial = tutorial;
+      this.currentInmueble = tutorial;
       this.currentIndex = index;
-    },
-
-    removeAllTutorials() {
-      TutorialDataService.deleteAll()
-        .then(response => {
-          console.log(response.data);
-          this.refreshList();
-        })
-        .catch(e => {
-          console.log(e);
-        });
     },
     
     searchTitle() {
       TutorialDataService.findByTitle(this.title)
         .then(response => {
-          this.tutorials = response.data;
-          console.log(response.data);
+          this.retrieveMobiliario = response.data;
+          //console.log(response.data);
         })
         .catch(e => {
           console.log(e);
         });
-    },
-    
-    logout() {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => this.$router.replace('ordenar'));
     }
   },
   mounted() {
-    this.retrieveTutorials();
+    this.retrieveMobiliario();
   },
   computed: {
     currentUser() {
@@ -227,6 +171,16 @@ export default {
       return this.tutorials.filter(function(u) {
          return u.no_trabajador == this.currentUser.no_trabajador;
      })
+    },
+    filteredList() {
+      return this.postList.filter(post => {
+        return post.title.toLowerCase().includes(this.search.toLowerCase())
+      })
+    },
+    filteredBlog: function(){
+      return this.inmuebles.filter((inmueble) => {
+        return inmueble.numero.match(this.search);
+      })
     }
   }
 };
@@ -242,4 +196,27 @@ export default {
 h4 {
     background-color: #002657;
 }*/
+
+.titlehd{
+    font-family: Helvetica, sans-serif, Arial;
+    font-weight:bold;
+    padding:12px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    font-size: 20px;
+}
+#titlehd{
+    font-family: Helvetica, sans-serif, Arial;
+    margin:0 auto;
+    padding:5px;
+    /*background:#002657;*/
+    color:white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    background-color: #002657;
+}
+.formss{
+    border-bottom-left-radius:12px;
+    border-bottom-right-radius:12px;
+}
 </style>

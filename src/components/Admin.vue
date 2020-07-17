@@ -1,7 +1,7 @@
 <template>
   <div class="list row">
         <!--<a href="#" @click="logout">Cerrar Sesion</a>-->
-    <!--Primer contenedor para cambiar contraseñas-->
+    <!--Primer contenedor para cambiar contraseñas
     <div class="col-md-10 m-5 rounded shadow-lg" style="background-color: #002657;">
         <h4>Contraseña guardada:</h4>
             <form>
@@ -9,68 +9,115 @@
                 <input :type="passwordFieldType" v-model="password" id="inputPassword" class="form-control" placeholder="Password">
                 <b-icon @click="switchVisibility" class="pt-2" icon="eye-slash-fill" font-scale="1.8"></b-icon>
               </div>
+                <button type="button" :href="'/usuarios/' + '5ee66e7b797f1830cf271ac7'" class="btn btn-success btn-small m-2 float-md-right">Success</button>
             </form>
-        <button type="button" class="btn btn-success btn-small m-2 float-md-right">Success</button>
-    </div>
+    </div>-->
 
-    <!--Segundo contenedor
-    <div class="col-md-10 mt-4 rounded shadow-lg" style="background-color: rgba(0,0,0,0.5) !important;">
-        <h4>Contraseña guardada:</h4>
-        <div class="card">
-            <div class="col-sm-10 card-body">
-                <input :type="passwordFieldType" v-model="password" class="form-control" id="inputPassword">
-                <button type="password" @click="switchVisibility"><img src="https://img.icons8.com/ios-filled/40/000000/show-password.png"/></button>
-            </div>
+    <!--Primer contenedor para cambiar contraseñas-->
+    <div class="col-md-10 mt-5">
+      <div class="form-group shadow-lg" style="border-radius:25px; background:#F1F1F1">
+        <div id="titlehd"> 
+          <span class="titlehd">Contraseña General:</span>
         </div>
-        <button type="button" class="btn btn-success btn-small m-2 float-md-right">Success</button>
+        <form class="container" id="card">
+          <div class="input-group rounded bg-secondary mt-2">
+              <input :type="passwordFieldType" class="form-control" placeholder="Password">
+              <b-icon @click="switchVisibility" class="pt-2" icon="eye-slash-fill" font-scale="1.8"></b-icon>
+          </div>
+          <div>
+            <button type="button" class="btn btn-success btn-small m-2 float-md-right">Success</button>
+          </div>
+        </form>
+      </div>
     </div>
-    -->
-    
 
     <!-- Tercer contenedor -->
     <!-- Search -->
-    <div class="col-md-10 rounded shadow-lg ml-5 mr-5 mb-1" style="background-color: #002657;">
-      <h4>Filtrar por:</h4>
+    <div class="col-md-10 ml-4 mr-5 mb-1 mt-1">
+      <span class="titlehd text-dark">Filtrar por:</span>
       <div class="input-group mb-3">
         <input type="text" class="form-control" placeholder="Ingrese el texto a buscar"
-          v-model="title"/>
-        <div class="input-group-append">
-          <button class="btn btn-success" type="button"
-            @click="searchTitle"
-          >
-            Buscar
-          </button>
-        </div>
+          v-model="search"/>
       </div>
     </div>
-    
-      <!-- Tabla prueba -->
-    <div style="height:400px; overflow:auto;" class="col-md-14 text-center rounded shadow-lg ml-4 mt-1 mb-4" >
+    <!-- Tabla prueba -->
+    <div style="height:400px; overflow:auto;" class="col-md-14 text-center rounded shadow-lg ml-5 mt-1 mb-4" >
         <table cellspacing="5" cellpadding="5" width="300" class="table-responsive table-striped table-hover">
             <thead class="bg-dark text-white">
                 <tr>
-                <th scope="col"># Trabajador</th>
+                <th scope="col">Codigo</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Correo</th>
-                <th scope="col">Role</th>
                 <th scope="col">Cambiar contraseña</th>
                 </tr>
             </thead>
              <tbody>
                <!--Index is use for show the position-->
                 <tr :class="{ active: index == currentIndex }"
-                    v-for="(tutorial, index) in tutorials"
+                    v-for="(usuario, index) in filteredUsers"
                     :key="index"
-                    @click="setActiveTutorial(tutorial, index)"
+                    @click="setActiveTutorial(usuario, index)"
                 >
-                    <th scope="row">{{tutorial.username}}</th>
-                    <td>{{tutorial.name}}</td>
-                    <td>{{tutorial.email}}</td>
-                    <td>Roles</td>
-                    <td><button type="button" class="btn btn-warning">Editar</button></td>
+                    <th scope="row">{{usuario.username}}</th>
+                    <td>{{usuario.name}}</td>
+                    <td>{{usuario.email}}</td>
+                    <td><button type="button" class="btn btn-warning" data-toggle="modal" data-target="#exampleModal">Editar</button></td>
                 </tr>
              </tbody>
         </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Editar</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+                  <div v-if="currentUsuario">
+                    <form>
+                      <div class="form-group row">
+                        <label for="Usuario" class="col-sm-2 col-form-label">Usuario:</label>
+                        <div class="col-sm-8">
+                          <input type="text" readonly class="form-control" v-model="currentUsuario.username">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="Nombre" class="col-sm-2 col-form-label">Nombre</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" readonly v-model="currentUsuario.name">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="Correo" class="col-sm-2 col-form-label">Correo</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" readonly v-model="currentUsuario.email">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="Contraseña" class="col-sm-2 col-form-label">Contraseña</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" required v-model="password">
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                <div v-else>
+                  <br />
+                  <p class="text-white">Selecciona un Usuario...</p>
+                </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary"  @click="updateUsuario">Guardar Cambios</button>
+            <p>{{ message }}</p>
+          </div>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -78,15 +125,12 @@
 
 <script>
 import TutorialDataService from "../services/TutorialDataService";
-import firebase from "firebase";
+import swal from 'sweetalert';
 
-
-//const token = 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjdXN0b2RpbyIsImlhdCI6MTU5MjIzNzc5NSwiZXhwIjoxNTkyMzI0MTk1fQ.yMl-_l4-JkpAxja4J9TgRzfNGN9_N0rwMh1AuAzqJHWa3TzSesacvPOqQQzZjjTZBDkqc_KKvWuACckr_-peZg';
 const token = JSON.parse(localStorage.getItem('user'))['accessToken']
 
 
 export default {
-  name: "tutorials-list",
   data() {
     return {
       config:{
@@ -96,80 +140,97 @@ export default {
         }
       },
 
-      tutorials: [],
-      currentTutorial: null,
+
+
+      usuarios: [],
+      currentUsuario: null,
       currentIndex: -1,
       title: "",
 
+      search:"",
+
+      message: '',
       password: '',
-      passwordFieldType: 'password',
-       items: [
-          { age: 40, first_name: 'Armando' , last_name: 'Macdonald' },
-          { age: 21, first_name: 'Larsen', last_name: 'Shaw' },
-          { age: 89, first_name: 'Geneva', last_name: 'Wilson' },
-          { age: 38, first_name: 'Jami', last_name: 'Carney' }
-        ]
+      passwordFieldType: 'password'
     };
   },
   methods: {
     switchVisibility() {
       this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password'
     },
-    retrieveTutorials() {
-      //this.token = this.currentUser.accessToken
-      //console.log(token)
-        //console.log(localStorage.getItem(user.token));
+    retrieveUsers() {
       TutorialDataService.getAllUsers(this.config)
         .then(response => {
-          this.tutorials = response.data;
+          this.usuarios = response.data;
           console.log(response.data);
         })
         .catch(e => {
+          console.log(e);
+        });
+    },
+
+    updateUsuario() {
+      console.log(this.currentUsuario)
+      console.log(this.password)
+      
+      var data = {
+        _id: this.currentUsuario._id,
+        username: this.currentUsuario.username,
+        password: this.password,
+        email: this.currentUsuario.email,
+        name: this.currentUsuario.name,
+        roles: this.currentUsuario.roles,
+      };
+
+      TutorialDataService.updateUser(this.currentUsuario._id, data)
+        .then(response => {
+          console.log(response.data);
+          swal({
+            title: "Contraseña actualizada correctamente!!",
+            //text: "You clicked the button!",
+            icon: "success",
+            button: "Entendido",
+          });
+          // eslint-disable-next-line no-undef
+          $('#exampleModal').modal('hide');
+          //this.exampleModal.hide;
+          //this.message = 'El pedido se actualizaco correctamente!';
+        })
+        .catch(e => {
+          swal({
+            title: "Error al actualizar la contraseña!!",
+            //text: "You clicked the button!",
+            icon: "error",
+            button: "Continuar",
+          });
           console.log(e);
         });
     },
 
     refreshList() {
-      this.retrieveTutorials();
-      this.currentTutorial = null;
+      this.retrieveUsers();
+      this.currentUsuario = null;
       this.currentIndex = -1;
     },
 
     setActiveTutorial(tutorial, index) {
-      this.currentTutorial = tutorial;
+      this.currentUsuario = tutorial;
       this.currentIndex = index;
-    },
-
-    removeAllTutorials() {
-      TutorialDataService.deleteAll()
-        .then(response => {
-          console.log(response.data);
-          this.refreshList();
-        })
-        .catch(e => {
-          console.log(e);
-        });
     },
     
     searchTitle() {
       TutorialDataService.findByTitle(this.title)
         .then(response => {
-          this.tutorials = response.data;
+          this.usuarios = response.data;
           console.log(response.data);
         })
         .catch(e => {
           console.log(e);
         });
-    },
-    logout() {
-      firebase
-        .auth()
-        .signOut()
-        .then(() => this.$router.replace('ordenar'));
     }
   },
   mounted() {
-    this.retrieveTutorials();
+    this.retrieveUsers();
   },
   computed: {
     currentUser() {
@@ -181,6 +242,11 @@ export default {
       }
       return false;
     },
+    filteredUsers: function(){
+      return this.usuarios.filter((usuario) => {
+        return usuario.username.match(this.search);
+      })
+    }
   }
 };
 </script>
@@ -195,4 +261,41 @@ export default {
 h4 {
     background-color: #002657;
 }*/
+
+.titlehd{
+    font-family: Helvetica, sans-serif, Arial;
+    font-weight:bold;
+    padding:12px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    font-size: 20px;
+}
+#titlehd{
+    font-family: Helvetica, sans-serif, Arial;
+    margin:0 auto;
+    padding:5px;
+    /*background:#002657;*/
+    color:white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    background-color: #002657;
+}
+.formss{
+    border-bottom-left-radius:12px;
+    border-bottom-right-radius:12px;
+}
+
+#card {
+    position: relative;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+}
 </style>
