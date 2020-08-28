@@ -1,51 +1,24 @@
 <template>
   <div class="list row">
-        <!--<a href="#" @click="logout">Cerrar Sesion</a>-->
-    <!--Primer contenedor para cambiar contraseñas
-    <div class="col-md-10 m-5 rounded shadow-lg" style="background-color: #002657;">
-        <h4>Contraseña guardada:</h4>
-            <form>
-              <div class="input-group bg-secondary">
-                <input :type="passwordFieldType" v-model="password" id="inputPassword" class="form-control" placeholder="Password">
-                <b-icon @click="switchVisibility" class="pt-2" icon="eye-slash-fill" font-scale="1.8"></b-icon>
-              </div>
-                <button type="button" :href="'/usuarios/' + '5ee66e7b797f1830cf271ac7'" class="btn btn-success btn-small m-2 float-md-right">Success</button>
-            </form>
-    </div>-->
-
-    <!--Primer contenedor para cambiar contraseñas-->
-    <div class="col-md-10 mt-5">
-      <div class="form-group shadow-lg" style="border-radius:25px; background:#F1F1F1">
-        <div id="titlehd"> 
-          <span class="titlehd">Contraseña General:</span>
-        </div>
-        <form class="container" id="card">
-          <div class="input-group rounded bg-secondary mt-2">
-              <input :type="passwordFieldType" class="form-control" placeholder="Password">
-              <b-icon @click="switchVisibility" class="pt-2" icon="eye-slash-fill" font-scale="1.8"></b-icon>
-          </div>
-          <div>
-            <button type="button" class="btn btn-success btn-small m-2 float-md-right">Success</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <!-- Tercer contenedor -->
     <!-- Search -->
-    <div class="col-md-10 ml-4 mr-5 mb-1 mt-1">
-      <span class="titlehd text-dark">Filtrar por:</span>
+    <div class="col-md-10 ml-5 mr-5 mb-1 mt-1">
+      <span class="titlehd text-dark">Filtrar:</span>
       <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Ingrese el texto a buscar"
+        <input type="text" class="form-control" placeholder="Ingrese el no. de cuenta a buscar"
           v-model="search"/>
       </div>
     </div>
+    
+    <div class="col-md-10 ml-5 text-right">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2">Agregar Usuario</button>
+    </div>
+
     <!-- Tabla prueba -->
-    <div style="height:400px; overflow:auto;" class="col-md-14 text-center rounded shadow-lg ml-5 mt-1 mb-4" >
-        <table cellspacing="5" cellpadding="5" width="300" class="table-responsive table-striped table-hover">
+    <div class="text-center rounded shadow-lg ml-5 mt-1 mb-4" >
+        <table cellspacing="5" cellpadding="5" width="300" class="table table-responsive table-striped table-hover">
             <thead class="bg-dark text-white">
                 <tr>
-                <th scope="col">Codigo</th>
+                <th scope="col">Usuario</th>
                 <th scope="col">Nombre</th>
                 <th scope="col">Correo</th>
                 <th scope="col">Cambiar contraseña</th>
@@ -67,7 +40,7 @@
         </table>
     </div>
 
-    <!-- Modal -->
+    <!-- Modal para cambiar contraseñas-->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -120,6 +93,62 @@
       </div>
     </div>
 
+    <!-- Modal para crear usuario-->
+    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Editar</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+                  <div>
+                    <form>
+                      <div class="form-group row">
+                        <label for="Usuario" class="col-sm-2 col-form-label">Usuario:</label>
+                        <div class="col-sm-8">
+                          <input type="text" placeholder="# de cuenta" class="form-control" v-model="username">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="Nombre" class="col-sm-2 col-form-label">Nombre:</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" v-model="name">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="Correo" class="col-sm-2 col-form-label">Correo</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" v-model="email">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="Contraseña" class="col-sm-2 col-form-label">Contraseña</label>
+                        <div class="col-sm-10">
+                          <input type="text" class="form-control" v-model="password">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleFormControlSelect1">Elige Rol</label>
+                        <select class="form-control" v-model="roles" id="exampleFormControlSelect1">
+                          <option>Administrador</option>
+                          <option>Usuario</option>
+                        </select>
+                      </div>
+                    </form>
+                  </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+            <button type="button" class="btn btn-primary"  @click.prevent="createUsuario">Guardar Cambios</button>
+            <p>{{ message }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -128,7 +157,6 @@ import TutorialDataService from "../services/TutorialDataService";
 import swal from 'sweetalert';
 
 const token = JSON.parse(localStorage.getItem('user'))['accessToken']
-
 
 export default {
   data() {
@@ -140,24 +168,31 @@ export default {
         }
       },
 
-
-
       usuarios: [],
       currentUsuario: null,
       currentIndex: -1,
-      title: "",
 
       search:"",
 
       message: '',
+       
+      //Variables de un usuario
+      username: '',
+      name:'',
+      email:'',
       password: '',
+      roles:[],
+
       passwordFieldType: 'password'
     };
   },
   methods: {
+    /* Muestra la contraseña */
     switchVisibility() {
       this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password'
     },
+
+    /* Obtiene todos los usuarios */
     retrieveUsers() {
       TutorialDataService.getAllUsers(this.config)
         .then(response => {
@@ -169,6 +204,7 @@ export default {
         });
     },
 
+    /* Actualiza solo la contraseña del usuario seleccionado */
     updateUsuario() {
       console.log(this.currentUsuario)
       console.log(this.password)
@@ -193,8 +229,6 @@ export default {
           });
           // eslint-disable-next-line no-undef
           $('#exampleModal').modal('hide');
-          //this.exampleModal.hide;
-          //this.message = 'El pedido se actualizaco correctamente!';
         })
         .catch(e => {
           swal({
@@ -207,26 +241,56 @@ export default {
         });
     },
 
+    /* Crear un nuevo usuario */
+    createUsuario() {
+      var data = {
+        username: this.username,
+        password: this.password,
+        email: this.email,
+        name: this.name,
+        roles: [this.roles],
+      };
+
+      console.log(data);
+
+      TutorialDataService.singUp(data)
+        .then(response => {
+          console.log(response.data);
+          swal({
+            title: "Usuario creado correctamente!!",
+            //text: "You clicked the button!",
+            icon: "success",
+            button: "Entendido",
+          });
+          // eslint-disable-next-line no-undef
+          $('#exampleModal2').modal('hide');
+          //this.exampleModal.hide;
+          //this.message = 'El pedido se actualizaco correctamente!';
+        })
+        .catch(e => {
+          swal({
+            title: "Error al crear el usuario!!",
+            //text: "You clicked the button!",
+            icon: "error",
+            button: "Continuar",
+          });
+          console.log(e);
+          this.message = e;
+        });
+
+     },
+    
+    /* Actualiza los datos cada determinado tiempo */
     refreshList() {
       this.retrieveUsers();
       this.currentUsuario = null;
       this.currentIndex = -1;
     },
-
+    
+    /*Permite seleccionar un registro de la tabla */
     setActiveTutorial(tutorial, index) {
       this.currentUsuario = tutorial;
       this.currentIndex = index;
-    },
-    
-    searchTitle() {
-      TutorialDataService.findByTitle(this.title)
-        .then(response => {
-          this.usuarios = response.data;
-          console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
     }
   },
   mounted() {
@@ -236,12 +300,14 @@ export default {
     currentUser() {
       return this.$store.state.auth.user;
     },
+    /*
     showAdminBoard() {
       if (this.currentUser && this.currentUser.roles) {
         return this.currentUser.roles.includes('ROLE_ADMIN');
       }
       return false;
     },
+    /* Filtra la lista de los usuarios mediante el Numero de cuenta */
     filteredUsers: function(){
       return this.usuarios.filter((usuario) => {
         return usuario.username.match(this.search);
@@ -298,4 +364,11 @@ h4 {
     border: 1px solid rgba(0,0,0,.125);
     border-radius: .25rem;
 }
+
+ table {
+      overflow-y: scroll;
+      display: block;
+      height: 400px;
+      width: auto;
+    }
 </style>

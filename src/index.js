@@ -59,6 +59,7 @@ fs.createReadStream(__dirname + '/csv-sample.csv')
 
 */
 
+/* Parte que funciona para subir CSV Directo 
 const parse = require('csv-parse');
 const fs = require('fs');
 
@@ -77,3 +78,45 @@ fs.createReadStream(__dirname + '/Roman.csv')
   .on('end', function () {
      console.log(csvData)
   });
+  */
+
+  /* Intento con nuevo tutorial */
+  //export const MY_CONST = 'Vue.js';
+
+  export default function bar() {
+
+  let MongoClient = require('mongodb').MongoClient;
+  let url = "mongodb+srv://ArmandoDev:3slO99x9z7rHUxUv@myfirstcluster-dpp83.azure.mongodb.net/test";
+   
+  const csvFilePath='Roman.csv'
+  const csv = require('csvtojson')
+   
+  csv()
+  .fromFile(csvFilePath) //Convierte el archivo en objeto json
+  .then((jsonObj)=>{
+      console.log(jsonObj);
+    /**
+      [ 
+        { _id: '1', name: 'Jack Smith', address: 'Massachusetts', age: '23' },
+        { _id: '2', name: 'Adam Johnson', address: 'New York', age: '27' },
+        { _id: '3', name: 'Katherin Carter', address: 'Washington DC', age: '26' },
+        { _id: '4', name: 'Jack London', address: 'Nevada', age: '33' },
+        { _id: '5', name: 'Jason Bourne', address: 'California', age: '36' } 
+      ]
+    */
+    
+    // Insert Json-Object to MongoDB
+    MongoClient.connect(url, { useNewUrlParser: true }, (err, db) => {
+      if (err) throw err;
+      var dbo = db.db("Restaurant");
+      dbo.collection("inmueble").insertMany(jsonObj, (err, res) => {
+      if (err) throw err;
+      console.log("Number of documents inserted: " + res.insertedCount);
+      /**
+        Number of documents inserted: 5
+      */
+      db.close();
+      });
+    });
+  })
+}

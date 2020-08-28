@@ -2,8 +2,8 @@
 <div class="container mt-5">
 	<div class="d-flex justify-content-center h-100">
 		<div class="card shadow-lg">
-			<div class="card-header" style="background: #002657">
-				<h3 class="text-white">Iniciar Sesión</h3>
+			<div class="card-header bg-info">
+				<h3>Iniciar Sesion</h3>
 			</div>
 			<div class="card-body">
 				<form @submit.prevent="handleLogin">
@@ -11,13 +11,13 @@
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-user"></i></span>
 						</div>
-						<input v-model="user.username" name="username" required type="text" class="form-control" placeholder="No. de Trabajador...">
+						<input v-model="user.username" name="username" required type="text" class="form-control" placeholder="Usuario">
 					</div>
 					<div class="input-group form-group">
 						<div class="input-group-prepend">
 							<span class="input-group-text"><i class="fas fa-key"></i></span>
 						</div>
-						<input v-model="user.password" name="password" type="password" required class="form-control" placeholder="Contraseña...">
+						<input v-model="user.password" name="password" type="password" required class="form-control" placeholder="contraseña">
 					</div>
                     <br>
 					<div class="form-group">
@@ -38,8 +38,10 @@
 
 <script src="/js/pwa.js"></script>
 <script>
-import User from '../models/user'; /* Se importa el modelo para iniciar sesion */
+import User from '../models/user';
 import swal from 'sweetalert';
+
+
 
 export default {
   name: 'SingIn',
@@ -49,13 +51,11 @@ export default {
     };
   },
   computed: {
-    /* Validas si el usuario esta logeado o no */
     loggedIn() {
       return this.$store.state.auth.status.loggedIn;
     }
   },
   created() {
-    /* Si el usuario esta logeado lo redireccionara al perfil */
     if (this.loggedIn) {
       this.$router.push('/profile');
     }
@@ -67,8 +67,8 @@ export default {
           this.$store.dispatch('auth/login', this.user).then(
             () => {
               swal({
-                  title: "Nos Alegra tenerte aqui!!",
-                  text: "Bienvenido al Inventario "+ this.user.username+".",
+                  title: "Bienvenido!!",
+                  //text: "You clicked the button!",
                   icon: "success",
                   button: "Entendido",
               })

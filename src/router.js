@@ -9,29 +9,7 @@ const  router = new Router({
   routes: [
     {
       path: "*", 
-      redirect: "/sesion"
-    },
-    {
-      path: "/menu",
-      alias: "/menu",
-      name: "menu",
-      component: () => import("./components/Menu")
-    },
-    {
-      path: "/ordenar",
-      alias: "/ordenar",
-      name: "ordenar",
-      component: () => import("./components/AddPedido")
-    },
-    {
-      path: "/pedidos",
-      name: "pedidos",
-      component: () => import("./components/PedidosList"),
-    },
-    {
-      path: "/pedidos/:id",
-      name: "pedido-detalles",
-      component: () => import("./components/Pedido"),
+      redirect: "/"
     },
     {
       path: "/admin",
@@ -42,11 +20,6 @@ const  router = new Router({
       path: "/custodio",
       name: "custodio",
       component: () => import("./components/Custodio"),
-    },
-    {
-      path: "/pedidos",
-      name: "pedidos",
-      component: () => import("./components/PedidosList"),
     },
     {
       path: "/",

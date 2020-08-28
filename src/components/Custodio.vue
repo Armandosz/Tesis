@@ -1,43 +1,47 @@
 <template>
   <div class="list row ">
-    <!--Primer contenedor para cambiar contraseñas-->
+    <!--Form-->
     <div class="col-md-10 mt-5">
       <div class="form-group shadow-lg" style="border-radius:25px; background:#F1F1F1">
         <div id="titlehd"> 
           <span class="titlehd">Contraseña:</span>
         </div>
         <form class="container card">
-          <div class="input-group rounded bg-secondary mt-2">
-              <input :type="passwordFieldType" class="form-control" placeholder="Password">
-              <b-icon @click="switchVisibility" class="pt-2" icon="eye-slash-fill" font-scale="1.8"></b-icon>
+          <div class="input-group rounded mt-2">
+              <input :type="passwordFieldType" class="form-control" required v-model="password" placeholder="Password">
+              <b-icon @click="switchVisibility" class="pt" id="eye" icon="eye-slash-fill" font-scale="2.2"></b-icon>
           </div>
           <div>
-            <button type="button" class="btn btn-success btn-small m-2 float-md-right">Success</button>
+            <button type="button" class="btn btn-success btn-small m-2 float-md-right" @click="updateUsuario">Success</button>
           </div>
         </form>
       </div>
     </div>
-    
 
-    <!-- Tercer contenedor -->
     <!-- Search -->
-    <div class="col-md-10 mr-5 mb-1 mt-1">
-      <span class="titlehd text-dark">Filtrar por:</span>
+    <div class="col-md-10 mb-1 mt-1">
+      <span class="titlehd text-dark">Filtrar por #:</span>
       <div class="input-group mb-3">
         <input type="text" class="form-control" placeholder="Ingrese el texto a buscar"
           v-model="search"/>
       </div>
     </div>
-    <!-- Tabla prueba -->
-    <div style="height:400px; overflow:auto;" class="col-md-14 text-center rounded shadow-lg  mt-1 mb-4" >
-        <table cellspacing="5" cellpadding="5" width="300" class="table-responsive table-striped table-hover">
+
+    <!-- Tabla -->
+    <div class="container text-center rounded shadow-lg mt-1 mb-4" >
+        <table cellspacing="5" cellpadding="5" width="500" class="table table-responsive table-striped table-hover">
             <thead class="bg-dark text-white">
                 <tr>
-                <th scope="col"># Inventario</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Ubicación</th>
-                <th scope="col">No. Trabajador</th>
-                <th scope="col">Custodio 2</th>
+                  <th scope="col">#</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Marca</th>
+                  <th scope="col">Modelo</th>
+                  <th scope="col">Serie</th>
+                  <th scope="col">Ubicación</th>
+                  <th scope="col">No._Trabajador</th>
+                  <th scope="col">custodio</th>
+                  <th scope="col">CVE_Dependencia</th>
+                  <th scope="col">Custodio_2</th>
                 </tr>
             </thead>
              <tbody>
@@ -45,12 +49,16 @@
                 <tr :class="{ active: index == currentIndex }"
                     v-for="(inmueble, index) in filteredInmuebles"
                     :key="index"
-                    @click="setActiveTutorial(inmueble, index)"
                 >
                     <th scope="row">{{inmueble.numero}}</th>
                     <td>{{inmueble.descripcion}}</td>
+                    <td>{{inmueble.marca}}</td>
+                    <td>{{inmueble.modelo}}</td>
+                    <td>{{inmueble.serie}}</td>
                     <td>{{inmueble.ubicacion}}</td>
                     <td>{{inmueble.no_trabajador}}</td>
+                    <td>{{inmueble.custodio}}</td>
+                    <td>{{inmueble.cve_depen}}</td>
                     <td>{{inmueble.custodio2}}</td>
                 </tr>
              </tbody>
@@ -61,6 +69,7 @@
 
 <script>
 import TutorialDataService from "../services/TutorialDataService";
+import swal from 'sweetalert';
 
 const token = JSON.parse(localStorage.getItem('user'))['accessToken']
 
@@ -76,23 +85,23 @@ export default {
         }
       },
 
-      contrasena: '',
-
       search: '',
 
       inmuebles: [],
       currentInmueble: null,
       currentIndex: -1,
-      title: "",
 
       password: '',
       passwordFieldType: 'password'
     };
   },
   methods: {
+    /* Muestra la contraseña en texto plano*/ 
     switchVisibility() {
       this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password'
     },
+
+    /* Get del mobiliario existente */
     retrieveMobiliario() {
       TutorialDataService.getAll(this.config)
         .then(response => {
@@ -104,67 +113,82 @@ export default {
         });
     },
 
-    updatePassword() {
-      //console.log(this.currentUser.id)
-      console.log(this.currentUser.contrasena)
-      this.currentUser.contrasena = this.currentUser.password
-      TutorialDataService.updatePassword(this.currentUser.id, this.currentUser.password)
+    /* PUT para actualizar solo la contraseña del usuario */
+    updateUsuario() {
+      console.log(this.currentUser)
+      console.log(this.password)
+      
+      var data = {
+        _id: this.currentUser.id,
+        username: this.currentUser.username,
+        password: this.password,
+        email: this.currentUser.email,
+        name: this.currentUser.name,
+        roles: this.currentUser.roles,
+      };
+      
+      if(this.password != "") {
+      TutorialDataService.updateUser(this.currentUser.id, data)
         .then(response => {
           console.log(response.data);
-          this.message = 'La contraseña se ha actualizado correctamente!';
+          swal({
+            title: "Contraseña actualizada correctamente!!",
+            //text: "You clicked the button!",
+            icon: "success",
+            button: "Entendido",
+          });
+          // eslint-disable-next-line no-undef
+          $('#exampleModal').modal('hide');
+          //this.exampleModal.hide;
+          //this.message = 'El pedido se actualizaco correctamente!';
         })
         .catch(e => {
+          swal({
+            title: "Error al actualizar la contraseña!!",
+            //text: "You clicked the button!",
+            icon: "error",
+            button: "Continuar",
+          });
           console.log(e);
         });
+      } else {
+        swal({
+            title: "La contraseña no puede ser nula!!",
+            //text: "You clicked the button!",
+            icon: "error",
+            button: "Entendido",
+          });
+      }
+
     },
 
+    /* Actualiza el Array de los inmuebles cada cierto tiempo */
     refreshList() {
       this.retrieveTutorials();
       this.currentTutorial = null;
       this.currentIndex = -1;
-    },
-
-    setActiveTutorial(tutorial, index) {
-      this.currentInmueble = tutorial;
-      this.currentIndex = index;
-    },
-    
-    searchTitle() {
-      TutorialDataService.findByTitle(this.title)
-        .then(response => {
-          this.inmuebles = response.data;
-          //console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
     }
   },
   mounted() {
+    /* Actualiza cada determinado tiempo el el mobiliario */
     this.retrieveMobiliario();
   },
   computed: {
-
+    /* Se utiliza para saber si el usuario esta autenticado o no */
     currentUser() {
       return this.$store.state.auth.user;
     },
-    showAdminBoard() {
-      if (this.currentUser && this.currentUser.roles) {
-        return this.currentUser.roles.includes('ROLE_ADMIN');
-      }
-      return false;
-    },
-    activeUsers() {
-      return this.inmuebles.filter(function(u) {
-         return u.no_trabajador == this.currentUser.no_trabajador;
-     })
-    },
-    filteredTutorials() {
+
+
+    //Retorna todos los inmuebles que tiene asignado el Numero de cuenta del usuario actual
+    filteredCustodioInmuebles() {
    // will return [{status: 'Available'}]
-      return this.inmuebles.filter(tutorial => tutorial.no_trabajador == this.currentUser.username)
+      return this.inmuebles.filter(tutorial => tutorial.no_trabajador == this.currentUser.username);
     },
+
+    //Retorna una lista filtrada del metodo search
     filteredInmuebles: function(){
-      return this.filteredTutorials.filter((inmueble ) => {
+      return this.filteredCustodioInmuebles.filter((inmueble ) => {
         return inmueble.numero.match(this.search);
       })
     }
@@ -205,5 +229,15 @@ h4 {
 .formss{
     border-bottom-left-radius:12px;
     border-bottom-right-radius:12px;
+}
+
+table {
+    overflow-y: scroll;
+    display: block;
+    height: 500px;
+}
+
+#eye:hover {
+  background-color: gray;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="list row ">
-    <!-- div prueba -->
+    <!-- div Form-->
     <div class="container ml-4 mt-5">
       <div class="form-group shadow-lg" style="border-radius:25px; background:#F1F1F1">
         <div id="titlehd"> 
@@ -10,7 +10,7 @@
           <div class="eweFile form-group">
             <p>&nbsp;</p>
             <span class="sel_file">
-              <input type="file" id="file" @change="previewFiles">
+              <input type="file" id="file">
             </span>
           </div>
           <div>
@@ -20,38 +20,31 @@
       </div>
     </div>
 
-    <!-- Primer container 
-    <div class="col-md-10 m-5 rounded shadow-lg" style="background-color: #002657;">
-        <h4>Archivo de inventario:</h4>
-        <div class="card" >
-            <div class="custom-file card-body">
-                <input type="file" class="custom-file-input" id="customFileLang" lang="es">
-                <label class="custom-file-label" for="customFileLang">Seleccionar Archivo</label>
-            </div>
-        </div>
-        <button type="button" class="btn btn-success btn-small m-2 float-md-right">Success</button>
-    </div> -->
-    
-
-    <!-- Tercer contenedor -->
     <!-- Search -->
-    <div class="col-md-10 ml-4 mr-5 mb-1 mt-1">
+    <div class="col-md-10 ml-4 mr-5 mt-1">
       <span class="titlehd text-dark">Filtrar por:</span>
       <div class="input-group mb-3">
-        <input type="text" class="form-control" placeholder="Ingrese el texto a buscar"
+        <input type="text" class="form-control" placeholder="Ingrese el código a buscar"
           v-model="search"/>
       </div>
     </div>
-    <!-- Tabla prueba -->
-    <div style="height:400px; overflow:auto;" class="col-md-14 text-center rounded shadow-lg mt-1 mb-4" >
-        <table cellspacing="5" cellpadding="5" width="300" class="table-responsive table-striped table-hover">
+
+    <!-- Tabla -->
+    <div class="container text-center rounded shadow-lg mb-3">
+        <table cellspacing="5" width="500" class="table table-responsive table-striped table-hover">
             <thead class="bg-dark text-white">
                 <tr>
-                <th scope="col"># Inventario</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Ubicación</th>
-                <th scope="col">No. Trabajador</th>
-                <th scope="col">Custodio 2</th>
+                  <th scope="col">Código</th>
+                  <th scope="col">Descripción</th>
+                  <th scope="col">Marca</th>
+                  <th scope="col">Modelo</th>
+                  <th scope="col">Serie</th>
+                  <th scope="col">Ubicación</th>
+                  <th scope="col">No._Trabajador</th>
+                  <th scope="col">custodio</th>
+                  <th scope="col">CVE_Dependencia</th>
+                  <th scope="col">Custodio_2</th>
+                  <th scope="col">Observaciones</th>
                 </tr>
             </thead>
              <tbody>
@@ -60,31 +53,33 @@
                 <tr :class="{ active: index == currentIndex }"
                     v-for="(inmueble, index) in filteredBlog"
                     :key="index"
-                    @click="setActiveTutorial(inmueble, index)"
                 >
                     <th scope="row">{{inmueble.numero}}</th>
                     <td>{{inmueble.descripcion}}</td>
+                    <td>{{inmueble.marca}}</td>
+                    <td>{{inmueble.modelo}}</td>
+                    <td>{{inmueble.serie}}</td>
                     <td>{{inmueble.ubicacion}}</td>
                     <td>{{inmueble.no_trabajador}}</td>
+                    <td>{{inmueble.custodio}}</td>
+                    <td>{{inmueble.cve_depen}}</td>
                     <td>{{inmueble.custodio2}}</td>
+                    <td>{{inmueble.observaciones}}</td>
                 </tr>
              </tbody>
         </table>
     </div>
+
   </div>
 </template>
 
 <script>
 import TutorialDataService from "../services/TutorialDataService";
-//const path = require('path');
 
-//import index from 'index.js'
-//console.log(index)
+const token = JSON.parse(localStorage.getItem('user'))['accessToken'] //Obtienes el token
 
-
-const token = JSON.parse(localStorage.getItem('user'))['accessToken']
 export default {
-  name: "tutorials-list",
+  name: "inventario",
   data() {
     return {
       config:{
@@ -94,89 +89,56 @@ export default {
         }
       },
 
-
       search:'',
-      file:'',
+      
       inmuebles: [],
       currentInmueble: null,
       currentIndex: -1,
-      title: "",
 
       password: '',
       passwordFieldType: 'password'
     };
   },
   methods: {
+    /* Icono para la visibilidad de la contraseña */
     switchVisibility() {
       this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password'
     },
+    /* Obtiene todo el mobiliario de la db */
     retrieveMobiliario() {
       TutorialDataService.getAll(this.config)
         .then(response => {
           this.inmuebles = response.data;
-          //console.log(response.data);
+          console.log(response.data);
         })
         .catch(e => {
           console.log(e);
         });
     },
 
-    previewFiles(event) {
-      this.file = event.target.files[0].name;
-      console.log(this.file);
-      //console.log(event.target.files);
-   },
-
-    submitFile(){
-      // Methods to display directory 
-      console.log(this.file); 
-    },
-
+    /* Recarga */
     refreshList() {
       this.retrieveMobiliario();
       this.currentInmueble = null;
       this.currentIndex = -1;
-    },
-
-    setActiveTutorial(tutorial, index) {
-      this.currentInmueble = tutorial;
-      this.currentIndex = index;
-    },
-    
-    searchTitle() {
-      TutorialDataService.findByTitle(this.title)
-        .then(response => {
-          this.retrieveMobiliario = response.data;
-          //console.log(response.data);
-        })
-        .catch(e => {
-          console.log(e);
-        });
     }
   },
   mounted() {
     this.retrieveMobiliario();
   },
   computed: {
+    /* Devuelve los datos del usuario actual*/
     currentUser() {
       return this.$store.state.auth.user;
     },
-    showAdminBoard() {
-      if (this.currentUser && this.currentUser.roles) {
-        return this.currentUser.roles.includes('ROLE_ADMIN');
-      }
-      return false;
-    },
-    activeUsers() {
-      return this.tutorials.filter(function(u) {
-         return u.no_trabajador == this.currentUser.no_trabajador;
-     })
-    },
+    /* filtra la lista  
     filteredList() {
       return this.postList.filter(post => {
         return post.title.toLowerCase().includes(this.search.toLowerCase())
       })
     },
+    */
+    /* Filtra la lista de los inmuebles existentes del excel */
     filteredBlog: function(){
       return this.inmuebles.filter((inmueble) => {
         return inmueble.numero.match(this.search);
@@ -219,4 +181,10 @@ h4 {
     border-bottom-left-radius:12px;
     border-bottom-right-radius:12px;
 }
+
+ table {
+      overflow-y: scroll;
+      display: block;
+      height: 500px;
+    }
 </style>
